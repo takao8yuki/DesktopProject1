@@ -6,23 +6,28 @@
 
 // バージョン情報ボックスのメッセージ ハンドラーです。
 // メイン関数の前に定義されている必要があります。
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
     switch (message)
     {
     case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
+        return true;
 
     case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        switch (LOWORD(wParam))
         {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
+        case IDOK: // OK ボタンがクリックされたときの処理
+            return true;
+        case IDCANCEL: // キャンセル ボタンがクリックされたときの処理
+            EndDialog(hDlg, IDCANCEL);
+            return true;
+        default: // 他のコマンドが発生した場合の処理
+            return false;
         }
-        break;
+    default:
+        return false;
     }
-    return (INT_PTR)FALSE;
 }
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -30,5 +35,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+    DialogBoxParam
+    ( hInstance
+    , MAKEINTRESOURCE(IDD_DIALOG1)
+    , NULL
+    , DialogProc
+    , 0
+    );
+
     return 0;
 }
